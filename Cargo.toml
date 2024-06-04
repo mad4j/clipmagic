@@ -1,0 +1,18 @@
+[package]
+name = "clipmagic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.86"
+clipboard-win = "5.3.1"
+confy = "0.6.1"
+eframe = "0.27.2"
+enigo = "0.2.1"
+image = "0.25.1"
+livesplit-hotkey = "0.7.0"
+serde = { version = "1.0.203", features = ["derive"] } 
+tray-icon = "0.14.2"
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1.12"
