@@ -1,5 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
+mod config;
+
 #[cfg(not(target_os = "linux"))]
 use std::{cell::RefCell, rc::Rc};
 
@@ -8,7 +10,6 @@ use anyhow::Result;
 use eframe::egui;
 use enigo::{Enigo, Keyboard, Settings};
 use livesplit_hotkey::{Hook, KeyCode, Modifiers};
-use serde::{Deserialize, Serialize};
 use tray_icon::TrayIconBuilder;
 
 use clipboard_win::{formats, Clipboard, Setter};
@@ -16,7 +17,9 @@ use clipboard_win::{formats, Clipboard, Setter};
 const SAMPLE: &str = "MY loli sample ^^";
 
 fn main() -> Result<()> {
-    let cfg: ClipEntry = confy::load("clipmagic", None)?;
+    env_logger::init();
+
+    let _config = config::init_configuration();
 
     let hook = Hook::new().unwrap();
 
@@ -146,36 +149,3 @@ fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
     };
     tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
 }
-
-#[derive(Debug, Default, Serialize, Deserialize)]
-struct ClipEntry {
-    data: String,
-    clipboard_flag: bool,
-}
-
-
-impl ClipEntry {
-    fn new<S: Into<String>>(data: S, clipboard_flag: bool) -> Self {
-        ClipEntry {
-            data: data.into(),
-            clipboard_flag,
-        }
-    }
-}
-
-/* 
-#[derive(Serialize, Deserialize)]
-struct Config {
-    entries: [ClipEntry; 3],
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self { entries: [
-           ClipEntry::new("prova", false),
-           ClipEntry::new("prova", false),
-           ClipEntry::new("prova", false), 
-        ] }
-    }
-}
-*/
